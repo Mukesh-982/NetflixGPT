@@ -1,17 +1,14 @@
 import React from 'react'
-import { Routes, Route } from 'react-router-dom'
-import Home from './components/Home'
-import Login from './components/Login'
-import Browse from './components/Browse'
+import AuthHandler from './Auth/AuthHandler'
+import { Provider} from 'react-redux'
+import store from './redux/store'
 
 const App = () => {
   return (
     <div>
-      <Routes>
-        <Route path='/' element={<Home />} />
-        <Route path='/login' element={<Login />} />
-        <Route path='/browse' element={<Browse />} />
-      </Routes>
+      <Provider store={store}>
+        <AuthHandler/>
+      </Provider>
     </div>
   )
 }

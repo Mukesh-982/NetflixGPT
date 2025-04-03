@@ -21,6 +21,8 @@ If you are developing a production application, we recommend using TypeScript an
 - Form validation
 - Firebase setup for Authentication
 - Create a sign up user account
+- Implemented sign in user api
+- Created Redux store with userSlice
 
 
 ## Features of our NetflixGPT
