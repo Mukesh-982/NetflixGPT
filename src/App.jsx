@@ -1,9 +1,17 @@
 import React from 'react'
+import { Routes, Route } from 'react-router-dom'
+import Home from './components/Home'
+import Login from './components/Login'
+import Browse from './components/Browse'
 
 const App = () => {
   return (
     <div>
-      <h2 className='text-center font-bold text-lg'>NetflixGPT</h2>
+      <Routes>
+        <Route path='/' element={<Home />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/browse' element={<Browse />} />
+      </Routes>
     </div>
   )
 }
