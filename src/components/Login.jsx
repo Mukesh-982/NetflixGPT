@@ -1,7 +1,56 @@
-import React, {useState} from 'react'
+import React, {useState, useRef} from 'react'
 import { background, LOGO_URL } from '../constants/constants'
+import { checkValidData } from '../utils/validate';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { signInWithEmailAndPassword } from 'firebase/auth';
+import { auth } from '../utils/firebase';
+
 const Login = () => {
     const [isSignInForm, setIsSignInForm] = useState(true);
+    const [errorMessage, setErrorMessage] = useState();
+    
+    const email = useRef(null);
+    const password = useRef(null);
+
+    const handleButtonClick = ()=>{
+        
+        const message = checkValidData( email.current.value, password.current.value);
+        console.log(message);
+        setErrorMessage(message);
+
+        //todo : Sign in or Sign up
+        if(message) return;
+
+        if(!isSignInForm){
+            //Sign up logic
+            createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
+            .then((userCredential)=>{
+                //Signed up
+                const user = userCredential.user;
+                console.log(user);
+            })
+            .catch((error)=>{
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode +"-"+errorMessage);
+            });
+        }
+        else{
+            // Sign in logic
+            signInWithEmailAndPassword(auth, email.current.value, password.current.value)
+            .then((userCredential)=>{
+                //Signed In
+                const user = userCredential.user;
+                console.log(user);
+            })
+            .catch((error)=>{
+                const errorCode = error.code;
+                const errorMessage = error.message;
+                console.log(errorCode +"-"+errorMessage);
+            });
+        }
+
+    }
 
     const toggleSignInForm = ()=>{
         setIsSignInForm(!isSignInForm);
@@ -19,7 +68,7 @@ const Login = () => {
 
             <div className="bg-black/75 p-8 rounded-lg shadow-lg text-white w-96">
                 <h2 className="text-2xl font-bold mb-4 text-center">{isSignInForm ? "Sign In" : "Sign Up"}</h2>
-                <form className="flex flex-col">
+                <form onSubmit={(e)=> e.preventDefault()} className="flex flex-col">
                     {
                         !isSignInForm && (
                             <input type="text" 
@@ -29,17 +78,24 @@ const Login = () => {
                         )
                     }
                     <input 
-                        type="text" 
+                        type="text"
+                        ref={email} 
                         placeholder="Email address" 
                         className="p-3 mb-4 rounded-md bg-gray-800 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500"
                     />
                     <input 
                         type="password" 
+                        ref={password}
                         placeholder="Password" 
                         className="p-3 mb-4 rounded-md bg-gray-800 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500"
                     />
+                    {errorMessage && (
+                        <p className='p-3 mb-4 text-lg font-bold text-red-600 text-center'>{errorMessage}</p>
+                    )}
                     <button 
-                        className="bg-red-600 hover:bg-red-700 transition-all p-3 rounded-md font-semibold text-white cursor-pointer">
+                        className="bg-red-600 hover:bg-red-700 transition-all p-3 rounded-md font-semibold text-white cursor-pointer"
+                        onClick={handleButtonClick}
+                    >
                         {isSignInForm ? "Sign In" : "Sign Up"}
                     </button>
                 </form>
