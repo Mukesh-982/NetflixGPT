@@ -1,16 +1,20 @@
 import React, {useState, useRef} from 'react'
-import { background, LOGO_URL } from '../constants/constants'
+import { background, LOGO_URL, userIcon } from '../constants/constants'
 import { checkValidData } from '../utils/validate';
-import { createUserWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../utils/firebase';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+import { addUser } from '../redux/userSlice';
 
 const Login = () => {
     const [isSignInForm, setIsSignInForm] = useState(true);
     const [errorMessage, setErrorMessage] = useState();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
     
+    const name = useRef(null);
     const email = useRef(null);
     const password = useRef(null);
 
@@ -23,20 +27,29 @@ const Login = () => {
         //todo : Sign in or Sign up
         if(message) return;
 
-        if(!isSignInForm){
-            //Sign up logic
+        if (!isSignInForm) {
+            // Sign up logic
             createUserWithEmailAndPassword(auth, email.current.value, password.current.value)
-            .then((userCredential)=>{
-                //Signed up
-                const user = userCredential.user;
-                console.log(user);
-                navigate('/browse');
-            })
-            .catch((error)=>{
-                const errorCode = error.code;
-                const errorMessage = error.message;
-                console.log(errorCode +"-"+errorMessage);
-            });
+                .then((userCredential) => {
+                    // Update user profile
+                    const user = userCredential.user;
+                    updateProfile(user, {
+                        displayName: name.current.value,
+                        photoURL: userIcon, 
+                    })
+                    .then(() => {
+                        // Redux will update via onAuthStateChanged
+                        const {uid, email, displayName, photoURL} = user;
+                        dispatch(addUser({uid: uid, email: email, name: displayName, photoURL: photoURL}));
+                        navigate("/browse");
+                    })
+                    .catch((error) => {
+                        setErrorMessage(error.message);
+                    });
+                })
+                .catch((error) => {
+                    setErrorMessage(error.message);
+                });
         }
         else{
             // Sign in logic
@@ -76,6 +89,7 @@ const Login = () => {
                     {
                         !isSignInForm && (
                             <input type="text" 
+                                ref={name}
                                 placeholder='Full Name'
                                 className='p-3 mb-4 rounded-md bg-gray-800 border border-gray-600 focus:outline-none focus:ring-2 focus:ring-red-500'
                             />

@@ -1,15 +1,25 @@
 import React from 'react';
 import { background } from '../constants/constants';
 import Header from './Header';
+import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
+  const navigate = useNavigate();
+  
   return (
     <div 
       className="relative w-screen h-screen overflow-hidden"
       style={{ backgroundImage: `url(${background})` }}
     >
       
-      <Header />
+      <div className='flex items-center justify-between'>
+        <Header />
+        <button className='bg-red-500 hover:bg-red-600 text-white px-4 py-2 mr-4 rounded-lg font-semibold shadow-md cursor-pointer transition-all duration-200'
+          onClick={()=> navigate('/login')}
+        >
+          Log in
+        </button>
+      </div>
 
       <div className="flex flex-col justify-center items-center h-full text-white text-center relative px-4">
         <h1 className="text-4xl md:text-5xl font-extrabold leading-tight">
