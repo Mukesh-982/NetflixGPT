@@ -1,40 +1,60 @@
-import React, { useEffect } from 'react'
-import Home from '../components/Home'
-import Login from '../components/Login'
-import Browse from '../components/Browse'
-import {Routes, Route} from 'react-router-dom'
-import { onAuthStateChanged } from 'firebase/auth'
-import { auth } from '../utils/firebase'
-import { useDispatch } from 'react-redux'
-import { addUser, removeUser } from '../redux/userSlice'
-
+import React, { useEffect, useState } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import { onAuthStateChanged } from 'firebase/auth';
+import { useDispatch } from 'react-redux';
+import { addUser, removeUser } from '../redux/userSlice';
+import { auth } from '../utils/firebase';
+import Home from '../components/Home';
+import Login from '../components/Login';
+import Browse from '../components/Browse';
+import ProtectedRoute from '../components/ProtectedRoute';
+import RedirectIfAuthenticated from '../components/RedirectIfAuthenticated';
+import LoadingSpinner from '../components/LoadingSpinner';
 
 const AuthHandler = () => {
-    const dispatch = useDispatch();
+  const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(true); 
 
-    useEffect(()=>{
-        onAuthStateChanged(auth, (user)=>{
-        if(user){
-            // User is logged in or signed up
-            const {uid, email, displayName, photoURL} = user;
-            dispatch(addUser({uid: uid, email: email, name: displayName, photoURL: photoURL}));
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        const { uid, email, displayName, photoURL } = user;
+        dispatch(addUser({ uid, email, name: displayName, photoURL }));
+      } else {
+        dispatch(removeUser());
+      }
+      setIsLoading(false); 
+    });
+
+    // Optional: cleanup on unmount
+    return () => unsubscribe();
+  }, []);
+
+  if (isLoading) {
+    return <LoadingSpinner />; 
+  }
+
+  return (
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route
+        path="/login"
+        element={
+          <RedirectIfAuthenticated>
+            <Login/>
+          </RedirectIfAuthenticated>
         }
-        else{
-            // user is logged out
-            dispatch(removeUser());
+      />
+      <Route
+        path="/browse"
+        element={
+          <ProtectedRoute>
+            <Browse/>
+          </ProtectedRoute>
         }
-    })
-    },[])
+      />
+    </Routes>
+  );
+};
 
-    return (
-        <div>
-            <Routes>
-                <Route path='/' element= {<Home/>}/>
-                <Route path='/login' element={<Login/>}/>
-                <Route path='/browse' element={<Browse/>}/>
-            </Routes>
-        </div>
-    );
-}
-
-export default AuthHandler
+export default AuthHandler;
