@@ -7,12 +7,12 @@ const Header = () => {
 
   return (
     <header className='flex justify-between items-center p-4 bg-gradient-to-b from-black to-transparent'>
-      {/* Logo */}
+      
       <div className='w-28'>
         <img src={LOGO_URL} alt="logo" className='w-full h-auto' />
       </div>
 
-      {/* User Icon + Logout Button */}
+
       <div className='flex items-center gap-3'>
         <img
           src={userIcon}
