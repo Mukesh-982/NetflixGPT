@@ -1,21 +1,14 @@
 import React from 'react'
 import Header from './Header'
 import { userIcon } from '../constants/constants'
-import { signOut } from 'firebase/auth';
-import { auth } from '../utils/firebase';
-import { useNavigate } from 'react-router-dom';
+import useHandleSignOut from '../hooks/useHandleSignOut';
+import useNowPlayingMovies from '../hooks/useNowPlayingMovies';
 
 const Browse = () => {
     
-    const navigate = useNavigate();
-
-    const handleSignOut = ()=>{
-        signOut(auth).then(()=>{
-            navigate("/");
-        }).catch((error)=>{
-            navigate("/error");
-        })
-    }
+    
+    const handleSignOut = useHandleSignOut();
+    useNowPlayingMovies();
 
     return (
         <div className='min-h-screen bg-gray-100'>
