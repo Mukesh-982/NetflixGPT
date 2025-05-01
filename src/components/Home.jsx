@@ -1,6 +1,5 @@
 import React from 'react';
-import { background } from '../constants/constants';
-import Header from './Header';
+import { background, LOGO_URL } from '../constants/constants';
 import { useNavigate } from 'react-router-dom';
 
 const Home = () => {
@@ -12,9 +11,11 @@ const Home = () => {
       style={{ backgroundImage: `url(${background})` }}
     >
       
-      <div className='flex items-center justify-between'>
-        <Header />
-        <button className='bg-red-500 hover:bg-red-600 text-white px-4 py-2 mr-4 rounded-lg font-semibold shadow-md cursor-pointer transition-all duration-200'
+      <div className='flex items-center justify-between px-4 bg-gradient-to-b from-black to-transparent'>
+        <div className='w-32 mt-6'>
+          <img src={LOGO_URL} alt="logo" className='w-full h-auto' />
+        </div>
+        <button className='bg-red-500 hover:bg-red-600 text-white px-4 py-2 mr-4 mt-6 rounded-lg font-semibold shadow-md cursor-pointer transition-all duration-200'
           onClick={()=> navigate('/login')}
         >
           Log in

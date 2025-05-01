@@ -1,12 +1,12 @@
 import React, {useState, useRef} from 'react'
-import { background, userIcon } from '../constants/constants'
+import { background, userIcon, LOGO_URL } from '../constants/constants'
 import { checkValidData } from '../utils/validate';
 import { createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
 import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '../utils/firebase';
 import { useDispatch } from 'react-redux';
 import { addUser } from '../redux/userSlice';
-import Header from './Header';
+
 
 const Login = () => {
     const [isSignInForm, setIsSignInForm] = useState(true);
@@ -75,7 +75,9 @@ const Login = () => {
             style={{ backgroundImage: `url(${background})`, backgroundSize: 'cover', backgroundPosition: 'center' }}
         >
             
-            <Header/>
+            <div className='w-32 mt-6'>
+                <img src={LOGO_URL} alt="logo" className='w-full h-auto' />
+            </div>
 
             <div className='flex justify-center items-center h-[calc(100vh-80px)] mt-4'>
                 <div className="bg-black/75 p-8 rounded-lg shadow-lg text-white w-96">
